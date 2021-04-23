@@ -9,8 +9,6 @@ import {
   readFile,
   writeFile,
 } from "fs";
-import { indexOf } from "lodash";
-import { promisify } from "util";
 import {
   ChalkLogColors,
   FirebaseConfig,

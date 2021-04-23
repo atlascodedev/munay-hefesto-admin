@@ -1,3 +1,5 @@
+import firebaseConfig from "./firebase.config";
+
 export interface AdonisPath {
   rootFolder: string;
   gallery: string;
@@ -33,7 +35,7 @@ export const adonisImagePath: AdonisPath = {
 export const adonisConfig: AdonisConfig = {
   path: adonisImagePath,
   createBlur: true,
-  storageBucketPath: "portalbens-nextjs-hefesto.appspot.com",
+  storageBucketPath: firebaseConfig.storageBucket,
   baseCloudURL: "https://firebasestorage.googleapis.com/v0/b/",
 };
 
