@@ -1,8 +1,22 @@
-import { spawn, SpawnOptions } from "child_process";
+import { spawn, SpawnOptions, ChildProcess, exec } from "child_process";
 import { resolve, join } from "path";
 import { tmpdir } from "os";
 import * as chalk from "chalk";
-import { ChildProcess } from "node:child_process";
+import {
+  existsSync,
+  readFileSync,
+  writeFileSync,
+  readFile,
+  writeFile,
+} from "fs";
+import { indexOf } from "lodash";
+import { promisify } from "util";
+import {
+  ChalkLogColors,
+  FirebaseConfig,
+  FirebaseSDKConfigJSON,
+  SpawnArguments,
+} from "./@types";
 
 const log = console.log;
 
@@ -10,16 +24,43 @@ const npmCommand = process.platform == "win32" ? "npm.cmd" : "npm";
 const firebaseCommand =
   process.platform == "win32" ? "firebase.cmd" : "firebase";
 
-interface SpawnArguments {
-  command: string;
-  args: string[];
-  options: SpawnOptions;
-}
+const setupFirebaseConfig = async () => {
+  const firebaseConfigFilePath: string = resolve(
+    __dirname,
+    "../",
+    "src",
+    "config",
+    "firebase.config.ts"
+  );
 
-interface ChalkLogColors {
-  color_hex: string;
-  bg_color_hex: string;
-}
+  const checkFileEmpty = readFileSync(firebaseConfigFilePath, {
+    encoding: "utf8",
+  });
+
+  if (checkFileEmpty.length <= 0) {
+    const firebaseSpawn = spawn(firebaseCommand, ["apps:sdkconfig"]);
+
+    firebaseSpawn.stdout.on("data", (chunk: Buffer) => {
+      let stringManipulation: string = `${
+        chunk.toString().split("initializeApp(")[1].split(");")[0]
+      }`;
+
+      let parsedData: FirebaseConfig = JSON.parse(stringManipulation);
+
+      let stringToWrite: string = `export default ${JSON.stringify(
+        parsedData
+      )}`;
+
+      writeFile(firebaseConfigFilePath, stringToWrite, () => {
+        console.log("Config file was created successfully");
+      });
+    });
+  } else {
+    console.log("File is already populated");
+  }
+};
+
+setupFirebaseConfig();
 
 const runTerminalCommand = (
   spawnArgs: SpawnArguments,
@@ -36,11 +77,11 @@ const runTerminalCommand = (
     .hex(chalkConfig.color_hex)
     .bgHex(chalkConfig.bg_color_hex);
 
-  terminalCommand.stdout.on("data", (chunk) => {
+  terminalCommand.stdout?.on("data", (chunk) => {
     log(chalkedLog(`${processName}:`), chunk.toString());
   });
 
-  terminalCommand.stderr.on("data", (chunk) => {
+  terminalCommand.stderr?.on("data", (chunk) => {
     log(
       chalkedLog(`${processName} ERROR:`),
       chalk.bgRedBright.bold.whiteBright(`${chunk}`)
@@ -84,11 +125,3 @@ runTerminalCommand(
   { bg_color_hex: "#007ACC", color_hex: "#FFFFFF" },
   "Typescript cloud functions compilation"
 );
-
-// const process = spawn(...); // long running process
-// // ... later...
-//         if (os.platform() === 'win32') { // process.platform was undefined for me, but this works
-//           execSync(`taskkill /F /T /PID ${process.pid}`); // windows specific
-//         } else {
-//           process.kill();
-//         }
