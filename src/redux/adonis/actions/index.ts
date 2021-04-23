@@ -152,6 +152,7 @@ export const deleteImage = (): ThunkAction<
         },
       });
     } catch (error) {
+      console.log(error);
       dispatch({
         type: DELETE_ADONIS_IMAGE_FAIL,
       });

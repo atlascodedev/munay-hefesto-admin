@@ -1,7 +1,7 @@
 import React from "react";
 import { collections } from "../../config/collections.config";
 import { AppLayoutRoot } from "../styles";
-import logo from "../../images/logo.svg";
+import logo from "../../images/munay-logo.svg";
 import { RootState } from "../../redux";
 import { connect, ConnectedProps } from "react-redux";
 import { logoutUser } from "../../redux/authentication/actions";
