@@ -1,15 +1,15 @@
 {
   "projects": {
-    "default": "portalbens-nextjs-hefesto"
+    "default": "munay-nextjs-hefesto"
   },
   "targets": {
-    "portalbens-nextjs-hefesto": {
+    "munay-nextjs-hefesto": {
       "hosting": {
-        "admin": [
-          "portalbens-admin"
-        ],
         "app": [
-          "portalbens-nextjs-hefesto"
+          "munay-nextjs-hefesto"
+        ],
+        "admin": [
+          "munay-admin-app"
         ]
       }
     }
