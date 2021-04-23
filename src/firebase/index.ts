@@ -2,7 +2,8 @@ import app from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 import "firebase/storage";
-const firebaseConfig = require("../../firebase-config.json").results.sdkConfig;
+const firebaseConfig = require("../config/firebase-config.json").results
+  .sdkConfig;
 const firebase = app.initializeApp(firebaseConfig);
 
 export const db = firebase.firestore();
